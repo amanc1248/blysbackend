@@ -2,10 +2,9 @@ services:
   # PostgreSQL Database
   - type: pserv
     name: taskmanager-db
-    env: docker
     plan: free
-    region: oregon
-    ipAllowList: []
+    databaseName: taskmanager
+    databaseUser: taskmanager
 
   # Backend API
   - type: web
