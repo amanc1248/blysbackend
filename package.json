@@ -1,7 +1,7 @@
 {
-  "name": "blys-task-manager-backend",
+  "name": "task-manager-backend",
   "version": "1.0.0",
-  "description": "Blys Task Manager API with JWT authentication and PostgreSQL - Built for Blys Job Application",
+  "description": "Task Manager API with JWT authentication and PostgreSQL",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
