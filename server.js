@@ -15,9 +15,24 @@ const app = express();
  */
 
 // CORS configuration - allows frontend to communicate with backend
+const allowedOrigins = [
+  process.env.FRONTEND_URL || 'http://localhost:5173',
+  'http://localhost:5173', // Local development
+  'http://localhost:3000'  // Alternative local port
+];
+
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:5173', // Vite default port
+    origin: function (origin, callback) {
+      // Allow requests with no origin (like mobile apps or Postman)
+      if (!origin) return callback(null, true);
+      
+      if (allowedOrigins.indexOf(origin) !== -1 || origin.includes('netlify.app')) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     credentials: true // Allow cookies to be sent
   })
 );
@@ -75,6 +90,7 @@ const startServer = async () => {
     
     if (!isConnected) {
       console.error('❌ Failed to connect to database. Please check your configuration.');
+      console.error('💡 Tip: Make sure DATABASE_URL is set correctly.');
       process.exit(1);
     }
 
@@ -82,6 +98,10 @@ const startServer = async () => {
     // Note: In production, use migrations instead of sync
     await sequelize.sync({ alter: false });
     console.log('✅ Database models synchronized');
+    
+    // Log environment for debugging
+    console.log(`📍 Environment: ${process.env.NODE_ENV || 'development'}`);
+    console.log(`🔗 CORS allowed origin: ${process.env.FRONTEND_URL || 'http://localhost:5173'}`);
 
     // Start server
     app.listen(PORT, () => {
